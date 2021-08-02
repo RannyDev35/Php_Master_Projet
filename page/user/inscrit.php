@@ -10,7 +10,6 @@
             margin-left: 50px;
             margiin-top: 20px;
         }
-
     </style>
 
 <!--===============================================================================================-->
@@ -21,6 +20,11 @@
 
 <body>
     <?php
+        $link = mysqli_connect("localhost", "root", "", "compta_db");
+        if($link === false){
+            die("ERROR: impossile de se connecter. " . mysqli_connect_error());
+        }
+        
         // definir les variable du valeur
         $nomErr = $emailErr = $telphoneErr = $mot_de_passErr = "";
         $nom = $email = $telephone = $telephone = $mot_de_pass = "";
@@ -37,13 +41,71 @@
             if (empty($_POST["nom"])) {
                 $nomErr = "Le champ de nom est obligatoire";
             } else {
+                
                 $nom = test_input($_POST["nom"]);
             }
     
             if (empty($_POST["email"])) {
                     $emailErr = "Le champ d'email est obligatoire";
             } else {
-                    $email = test_input($_POST["email"]);
+                // Prepare la section de user
+                $tes_email=$_POST["email"];
+                
+                $sql_email = "SELECT * FROM user where email= ?";
+                $result = mysqli_query($link, $sql_email);
+                
+                if ($result){
+
+                    if (mysqli_num_rows($result) > 0) {
+                   
+                        while($row = mysqli_fetch_assoc($result)) {
+                        echo "id: " . $row["id_user"]. " - Name: " . $row["nom"]. " " . $row["email"]. "<br>";
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+
+                } else{
+                    echo'vide';
+                }
+
+                // if (mysqli_num_rows($result) > 0) {
+                //     // output data of each row
+                //     while($row = mysqli_fetch_assoc($result)) {
+                //       echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
+                //     }
+                //   } else {
+                //     echo "0 results";
+                //   }
+                  
+                //   mysqli_close($link);
+                
+                // if($stmt = mysqli_prepare($link, $sql)){
+
+                //     // Lier des variables à l'instruction préparée en tant que paramètres
+                //     mysqli_stmt_bind_param($stmt, "s", $param_username);
+                    
+                //     // Définir les paramètres
+                //     $param_username = trim($_POST["email"]);
+                    
+                //     // Tenter d'exécuter l'instruction préparée
+                //     if(mysqli_stmt_execute($stmt)){
+                //         /* store result */
+                //         mysqli_stmt_store_result($stmt);
+                        
+                //         if(mysqli_stmt_num_rows($stmt) == 1){
+                //             $emailErr = "Email est déjà pris.";
+                //         } else{
+                //             $email = test_input($_POST["email"]);
+                //         }
+                //     } else{
+                //         echo "Oops! Something went wrong. Please try again later.";
+                //     }
+
+                //     // Close statement
+                //     mysqli_stmt_close($stmt);
+                // }
+                // $email = test_input($_POST["email"]);
             }
 
             if (empty($_POST["telephone"])) {
@@ -59,6 +121,25 @@
             }      
     
         }
+        echo $email.'<br>';
+        echo $nom.'<br>';
+
+        // if (!empty($nom) && !empty($telephone && !empty($mot_de_pass) && !empty($email))){
+
+           
+        //     // $test_email = "SELECT "
+        //     $sql = "INSERT INTO user (name, email, phone, password) VALUES ('$nom', '$email', '$telephone', '$mot_de_pass')";
+            
+        //     if(mysqli_query($link, $sql)){
+        //         echo "Insertion réussie.";
+        //     } else{
+        //     echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
+        //     }
+
+        //     mysqli_close($link);
+        //     header("Location: ../../login.php");
+
+        // }
        
     ?>
 	<div class="container">
@@ -110,31 +191,9 @@
                     <button type="submit" class="btn btn-default bg-primary text-white">Ajouter</button>
                 </div>
 			</div>
+            <p class='ml-5'>Si vous etes deja un compte connect-vous <a href="login.php">Login</a>.</p>
 		</form>
 	</div>
-    
-     <?php 
-        if (!empty($nom) && !empty($telephone && !empty($mot_de_pass) && !empty($email))){
-
-            // $link = mysqli_connect("localhost", "root", "", "compta_db");
-            // if($link === false){
-            //     die("ERROR: impossile de se connecter. " . mysqli_connect_error());
-            // }
-            // // $test_email = "SELECT "
-            // $sql = "INSERT INTO user (name, email, phone, password) VALUES ('$nom', '$email', '$telephone', '$mot_de_pass')";
-            
-            // if(mysqli_query($link, $sql)){
-            //     echo "Insertion réussie.";
-            // } else{
-            // echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
-            // }
-
-            // mysqli_close($link);
-            header("Location: ../../login.php");
-
-        }
-       ?>
-	
 	<script src="js/bootstrap.js"></script>
 
 </body>
