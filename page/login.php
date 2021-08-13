@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // $_SESSION['login'] = $myemail;
             $_SESSION['role'] = $row['role'];
 
-            header("location: index.php");
+            header("location: acceuil.php");
         } else {
             $error = '<p class="text-danger text-center">Votre email ou votre mot de passe est invalide</p>';
         }

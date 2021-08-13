@@ -17,10 +17,10 @@
     <title>Bienvenue</title>
 
     <!--===============================================================================================-->
-		<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
-		<link rel="stylesheet" type="text/css" href="../css/style.css">
-		<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-        <link rel="stylesheet" href="../Font-Awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="../../css/style.css">
+		<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../../Font-Awesome-4.7.0/css/font-awesome.min.css">
 
 	<!--===============================================================================================-->
 
@@ -34,7 +34,7 @@
                         <a href="index.php" class="mr-2 text-white fa fa-home fa-2x"></a>
                     </li>
                     <li class="nav-item">
-                        <a href="login.php" class="nav-link text-white ">Login</a>
+                        <a href="../login.php" class="nav-link text-white ">Login</a>
                     </li>
                     <li class="nav-item">
                         <div class="nav-link text-white">Inscription</div>
@@ -49,35 +49,58 @@
     <div class="wrapper">
         <div class="container-fluid">
             <div class="row bg-success p-5 ">
-                <div class="col-md-12 bg-primary">
-                    <h1 class="mt-2 mb-2 text-center">Bievenue sur le gestion de Produit</h1>
-                </div>
                 <div class="col-md-12 bg-warning">
-                    <h3 class="mt-5 ml-2 mb-2">Liste des produit:</h3>
                     <div class="container">
                         <div class="row p-2">
                         <?php
-                        include "db_connect.php";
-                        $sql = "SELECT * FROM `produit` ;";
+                        include "../db_connect.php";
+                        $id = intval($_GET['id']);
+                        
+                        if (!empty($id)){
+                            $sql = "SELECT * FROM `lot_produit` WHERE id_fk_produit = $id;";
+                        } else {
+                            $sql = "SELECT * FROM `lot_produit`;";
+                        }
                         $result = mysqli_query($link, $sql);
                         if ($result) {
                             if (mysqli_num_rows($result) > 0) {
                                 while ($row = mysqli_fetch_array($result)) {
                                     echo'<div class="bg-success m-2 p-2">';
-                                    echo'<a href="lot_produit/list_lot.php?id='.$row['id_produit'].'" class="text-dark">';
-                                    echo $row['nom_produit'];
+                                    echo'<a href="" class="text-dark">';
+                        
+                                    echo $row['nom_lot'];
                                     echo'</a>';
                                     echo'</div>';
                                 }
 
                             }
                         }
+
+                        
                         ?> 
                         </div>                       
                     </div>
-                    <p class="text-center">Il faut clique le nom de produit pour voir les lot de produit</p>
                 </div>
-                
+                <div class="col-md-12 bg-primary">
+                    <h1 class="mt-5 mb-3">Affiche l'utilisateur</h1>
+                    <div class="form-group">
+                        <label><u>Nom:</u></label>
+                        <p class='ml-3'><b><?php //echo $row["name"]; ?></b></p>
+                    </div>
+                    <div class="form-group">
+                        <label><u>Email</u>:</label>
+                        <p class='ml-3'><b><?php //echo $row["email"]; ?></b></p>
+                    </div>
+                    <div class="form-group">
+                        <label><u>Telephone</u>:</label>
+                        <p class='ml-3'><b><?php //echo $row["phone"]; ?></b></p>
+                    </div>
+                    <div class="form-group">
+                        <label><u>Mot de pass</u>:</label>
+                        <p class='ml-3'><b><?php //echo $row["password"]; ?></b></p>
+                    </div>
+                    <p><a href="detail_user.php" class="btn btn-primary">Retour</a></p>
+                </div>
             </div>
         </div>
     </div>

@@ -63,13 +63,15 @@ if ($result) {
             echo "<td>" . $row['phone'] . "</td>";
             echo "<td>";
             echo '<a href="afficher_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Afficher" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
-            echo '<a href="modifier_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Modifier" data-toggle="tooltip">&</a>';
+            echo '<a href="modifier_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Modifier" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
             echo '<a href="supprimer_user.php?id=' . $row['id_user'] . '" title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
             echo "</td>";
             echo "</tr>";
         }
         echo "</tbody>";
         echo "</table>";
+        // Free result set
+        $result->free();
     } else {
         echo "<div class='alert alert-danger'><em>Aucun enregistrement n'a été trouvé.</em></div>";
     }
