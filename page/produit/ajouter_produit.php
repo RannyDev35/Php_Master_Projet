@@ -22,17 +22,26 @@
         <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="../../css/style.css">
         <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../../Font-Awesome-4.7.0/css/font-awesome.min.css">
+
     <!--===============================================================================================-->
     </head>
 
     <body>
 
-        <?php
+<?php
+session_start();
+
+if (!isset($_SESSION['role'])) {
+    header("Location: ../login.php");
+}
+    
 include "../db_connect.php";
 
 // definir les variable du valeur
 $nomProduitErr = "";
 $nomProduit = "";
+$recu = false;
 
 function test_input($data)
 {
@@ -69,7 +78,7 @@ if (empty($nomProduitErr) && !empty($nomProduit)) {
 
     if (mysqli_query($link, $sql)) {
         $alert = '<div class="alert alert-primary mt-5 text-center"><h2>Votre enregistrement de produit est reussit</div>';
-        // header("refresh:3; url= ../login.php");
+        $recu = true;
 
     } else {
         echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
@@ -96,12 +105,21 @@ if (empty($nomProduitErr) && !empty($nomProduit)) {
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default bg-primary text-white">Enregistre</button>
-                    </div>
+                        <a href="../index.php" class="btn btn-primary mr-3"><i class="fa fa-step-backward"></i> Retour</a>
+                        <button type="submit" class="btn btn-default bg-primary text-white"><i class="fa fa-save mr-1"></i>Enregistre </button>
+                    </div>                   
+
                 </div>
             </form>
         </div>
         <script src="js/bootstrap.js"></script>
+
+        <?php 
+        if ($recu){
+            header("refresh: 5; Url = ../index.php");
+        }
+
+        ?>
 
     </body>
 </html>

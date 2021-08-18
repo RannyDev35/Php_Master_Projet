@@ -36,7 +36,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Record</title>
+    <title>Afficher user</title>
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../css/style.css">
     <style>
