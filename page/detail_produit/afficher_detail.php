@@ -7,7 +7,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     $id = $_GET["id"];
 
     // Préparer une déclaration de sélection
-    $sql = "SELECT * FROM `user` WHERE id_user = '$id' ;";
+    $sql = "SELECT * FROM `detail_produit` WHERE id_produit = '$id' ;";
     $result = mysqli_query($link, $sql);
     if ($result) {
 
@@ -51,24 +51,28 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 class="mt-5 mb-3">Affiche l'utilisateur</h1>
+                    <h1 class="mt-5 mb-3">Affiche le detail de produit</h1>
                     <div class="form-group">
-                        <label><u>Nom:</u></label>
-                        <p class='ml-3'><b><?php echo $row["name"]; ?></b></p>
+                        <label><u>Id de Produit:</u></label>
+                        <p class='ml-3'><b><?php echo $row["id_produit"]; ?></b></p>
                     </div>
                     <div class="form-group">
-                        <label><u>Email</u>:</label>
-                        <p class='ml-3'><b><?php echo $row["email"]; ?></b></p>
+                        <label><u>Description de produit:</u></label>
+                        <p class='ml-3'><b><?php echo $row["description"]; ?></b></p>
                     </div>
                     <div class="form-group">
-                        <label><u>Telephone</u>:</label>
-                        <p class='ml-3'><b><?php echo $row["phone"]; ?></b></p>
+                        <label><u>Debit</u>:</label>
+                        <p class='ml-3'><b><?php echo $row["debit"]; ?></b></p>
                     </div>
                     <div class="form-group">
-                        <label><u>Mot de pass</u>:</label>
-                        <p class='ml-3'><b><?php echo $row["password"]; ?></b></p>
+                        <label><u>Credit</u>:</label>
+                        <p class='ml-3'><b><?php echo $row["credit"]; ?></b></p>
                     </div>
-                    <p><a href="detail_user.php" class="btn btn-primary">Retour</a></p>
+                    <div class="form-group">
+                        <label><u>Date de production</u>:</label>
+                        <p class='ml-3'><b><?php echo $row["date_production"]; ?></b></p>
+                    </div>
+                    <p><a href="liste_detail.php?id=<?php echo $_GET['idLot'];?>" class="btn btn-primary">Retour</a></p>
                 </div>
             </div>
         </div>

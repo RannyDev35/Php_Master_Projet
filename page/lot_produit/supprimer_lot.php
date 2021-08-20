@@ -27,14 +27,14 @@
     include "../db_connect.php";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
-        $id= intval($_POST["id"]);
+        $idLot= intval($_POST["id"]);
         $produit = $_POST["produit"];
 
-        $sql = "DELETE FROM lot_produit where id_lot_produit=$id";
+        $sql = "DELETE FROM lot_produit where id_lot_produit=$idLot";
         if(mysqli_query($link, $sql)){
             $alert = '<div class="alert alert-success mt-5 text-center"><h2>Votre suppresion est reussit</div>';
             echo $alert;
-                header("refresh:2; url = lot_produit.php?id=$produit");
+                header("refresh:2; url = lot_produit.php?id=$idLot&idProduit=$produit");
         } else{
             echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
             header("refresh:5; url = lot_produit.php?id=$produit");

@@ -45,6 +45,9 @@
         echo '<li class="nav-item">';
         echo '<a href="produit/liste_produit.php" class="nav-link text-white ml-5">Produit</a>';
         echo '</li>';
+        echo '<li class="nav-item">';
+        echo '<a href="user/detail_user.php" class="nav-link text-white ml-5">Utilisateur</a>';
+        echo '</li>';
     } 
 
     if($login){

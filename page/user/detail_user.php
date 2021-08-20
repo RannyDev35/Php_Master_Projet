@@ -25,17 +25,34 @@
     </script>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-dark fixed-top">
+        <div class="container">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="../index.php" class="mr-2 text-white fa fa-home fa-2x"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../logout.php" class="nav-link text-white ml-3 ">Deconnect</a>
+                    </li>
+                
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="wrapper mt-5">
+        <div class="container-fluid mt-5">
             <div class="row">
                 <div class="col-md-12">
                     <div class="mt-5 mb-3 clearfix">
                         <h2 class="pull-left">Detail de l'utilisateur</h2>
                         <a href="inscrit_user.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Ajouter un utilisateur</a>
                     </div>
-                    <?php
-// Include config file
-// require_once "../db_connection.php";
+<?php
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: ../index.php");
+}
 include "../db_connect.php";
 // echo $db;
 
@@ -51,6 +68,7 @@ if ($result) {
         echo "<th>Name</th>";
         echo "<th>Email</th>";
         echo "<th>Telephone</th>";
+        echo "<th>Role</th>";
         echo "<th>Action</th>";
         echo "</tr>";
         echo "</thead>";
@@ -61,9 +79,10 @@ if ($result) {
             echo "<td>" . $row['name'] . "</td>";
             echo "<td>" . $row['email'] . "</td>";
             echo "<td>" . $row['phone'] . "</td>";
+            echo "<td>" . $row['role'] . "</td>";
             echo "<td>";
             echo '<a href="afficher_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Afficher" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
-            echo '<a href="modifier_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Modifier" data-toggle="tooltip">&</a>';
+            echo '<a href="modifier_user.php?id=' . $row['id_user'] . '" class="mr-3" title="Modifier" data-toggle="tooltip"><span class="fa fa-edit"></a>';
             echo '<a href="supprimer_user.php?id=' . $row['id_user'] . '" title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
             echo "</td>";
             echo "</tr>";

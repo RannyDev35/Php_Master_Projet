@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Metre a jour l'utilisateur</title>
+        <title>Modifier un detail produit</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             .error {
                 color: #FF0000;
                 margin-left: 50px;
-                margin-top: 20px;
+                margiin-top: 20px;
             }
         </style>
 
@@ -16,17 +16,28 @@
         <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="../../css/style.css">
         <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../../Font-Awesome-4.7.0/css/font-awesome.min.css">
+
     <!--===============================================================================================-->
     </head>
 
     <body>
 
-        <?php
+<?php
+session_start();
+
+if (!isset($_SESSION['role'])) {
+    header("Location: ../login.php");
+}
 include "../db_connect.php";
 
 // definir les variable du valeur
-$nomErr = $emailErr = $telphoneErr = $mot_de_passErr = "";
-$nom = $email = $telephone = $telephone = $mot_de_pass = $iduser = "";
+$descriptionErr = $prixErr = "";
+$dateProd = date("d/m/y");
+$idLot = "";
+$confirm = 1;
+$credit = $debit = 0;
+$recu='';
 
 function test_input($data)
 {
@@ -35,58 +46,54 @@ function test_input($data)
     $data = htmlspecialchars($data);
     return $data;
 }
+
 $id = $_GET['id'];
-// echo $id;
-
-$sql = "SELECT * FROM `user` WHERE id_user= '$id' ;";
+$sql = "SELECT * FROM `detail_produit` WHERE id_produit= '$id' ;";
 $result = mysqli_query($link, $sql);
-
 if (mysqli_num_rows($result) == 1) {
     $row = mysqli_fetch_array($result);
-    $nom = $row['name'];
-    $email = $row['email'];
-    $telephone = $row['phone'];
-    $mot_de_pass = $row['password'];
-    $iduser = $row['id_user'];
+    $idDetail = $row['id_produit'];
+    $description = $row['description'];
+    $debit = $row['debit'];
+    $credit = $row['credit'];
+    $dateProd = $row['date_production'];
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (empty($_POST["nom"])) {
-        $nomErr = "Le champ de nom est obligatoire";
-    } elseif($_POST['nom'] != $nom) {
-        $nom = test_input($_POST["nom"]);
+    if (empty($_POST["description"])) {
+        $descriptionErr = "Le champ de description est obligatoire";
+    } else {
+
+        $description = test_input($_POST["description"]);
     }
+    $debit = $_POST['debit'];
+    $credit = $_POST['credit'];
 
-    if (empty($_POST["email"])) {
-        $emailErr = "Le champ d'email est obligatoire";
-    } elseif($_POST['email'] != $email ) {
-        $email = test_input($_POST["email"]);
+    if ($credit == 0 && $debit == 0){
+        $prixErr = "Au moin l'un de prix credit ou debit est obligatoire";
     }
-
-    if (empty($_POST["telephone"])) {
-        $telephoneErr = "Le champ de telephone est obligatoire";
-    } elseif ($_POST['telephone'] != $telephone ) {
-        $telephone = test_input($_POST["telephone"]);
+    if ($credit != 0 && $debit != 0){
+        $prixErr = "Seul de prix debit et credit est remplir ";
     }
-
-    if (empty($_POST["mot_de_pass"])) {
-        $mot_de_passErr = "Le champ mot de pas est obligatoire";
-    } elseif($_POST['mot_de_pass'] != $mot_de_pass) {
-        $mot_de_pass = test_input($_POST["mot_de_pass"]);
+   
+    if (!empty($_POST['date'])){
+        $dateProd = $_POST['date'];
     }
+    $idDetail = $_POST['idDetail'];
+    $idLot = $_POST['idLot'];
+    // ||
 
-    if (empty($nomErr) && empty($telephoneErr) && empty($mot_de_passErr)) {
+    if ((!empty($description) && empty($descriptionErr)) && empty($prixErr) ) {
 
-        // echo 'lala'.$_POST['id'];
-        $id = intval($_POST['id']);
-        $telephone = intval($telephone);
-        // echo $id;
-        $sql = "UPDATE user  SET name='$nom', email= '$email', phone=$telephone, password='$mot_de_pass' WHERE id_user = $id;";
+        $sql = "UPDATE detail_produit SET description = '$description', debit = '$debit',
+                credit= '$credit' ,date_production= '$dateProd', confirmation='$confirm'
+                WHERE id_produit = '$idDetail';";
     
         if (mysqli_query($link, $sql)) {
-            $alert = '<div class="alert alert-success mt-5 text-center"><h2>Votre modification est reussit,</div>';
-            header("refresh:2; url = modifier_user.php?id=$id");
+            $alert = '<div class="alert alert-primary mt-5 text-center"><h2>Votre inscription est reussit</div>';
+            $recu = 'ok';
     
         } else {
             echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
@@ -95,68 +102,95 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_close($link);
     
     }
-
+    // echo $confirm
 }
-
-
 
 ?>
         <div class="container">
             <?php echo $alert; ?>
             <br>
-            <h2 class="text-center text-primary "><strong>METTRE A JOUR L'UTILISATEUR</strong></h2>
+            <h2 class="text-center text-primary "><strong>Modifier le detail de produit</strong></h2>
             <form class="form-horizontal ml-5 mt-5" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="nom">
-                        Nom:
+                    <label class="control-label col-sm-2">
+                        <strong>Date production:</strong>
                     </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Entrer votre nom" name="nom" value="<?php echo $nom; ?>">
+                        <input type="date" class="form-control" name="date" value="<?php echo $dateProd; ?>">
                     </div>
-                    <span class="error"> <?php echo $nomErr; ?></span>
+                    <em class="text-dark ml-5 mt-5"> 
+                        Si vous ne choisi pas la date, la valeur par defaut seras date aujourd'hui
+                     </em>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-10">
+                        <strong>Description:</strong>
+                        <span class="text-danger ml-5"> *Obligatoire</span>
+
+                    </label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control " rows=4 placeholder="Entrer la description de produit" name="description" value="<?php echo $description; ?>">
+                        <?php echo $description; ?> 
+                        </textarea>
+                    </div>
+                    <span class="error"> <?php echo $descriptionErr; ?></span>
+                    
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">
-                        Email:
+                    <label class="control-label col-sm-10">
+                        <strong>Debit:</strong>
+                        <span class="text-danger ml-5"> **L'un de Debit et Credit sont obligatoire</span>
                     </label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" placeholder="Entrer votre email" name="email" value="<?php echo $email; ?>">
-                    </div>
-                    <span class="error"> <?php echo $emailErr; ?></span>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="telephone">
-                        Telephone:
-                    </label>
-                    <div class="col-sm-10">
-                        <input type="number" class="form-control" placeholder="Entrer votre telephone" name="telephone" value="<?php echo $telephone; ?>">
-                    </div>
-                    <span class="error"> <?php echo $telephoneErr; ?></span>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="pwd">
-                        Mot de pass:
-                    </label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Entre votre mot de pass" name="mot_de_pass" value="<?php echo $mot_de_pass; ?>">
-                    </div>
-                    <span class="error"> <?php echo $mot_de_passErr; ?></span>
-                </div>
-                <input type="hidden" name="id" value="<?php echo $iduser; ?>"/>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default bg-primary w-50 text-white">Modifier</button>
-                        <a href="detail_user.php" class="btn btn-primary ml-2">Retour</a>
+                        <input type="number" class="form-control" name="debit" value="<?php echo $debit; ?>">
                     </div>
                 </div>
                 
+                <div class="form-group">
+                    <label class="control-label col-sm-2">
+                        <strong>Credit:</strong>
+                    </label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" name="credit" value="<?php echo $credit; ?>">
+                    </div>
+                </div>
+                <input type="hidden" name="idDetail" value="<?php echo $_GET['id']; ?>"/>
+                <input type="hidden" name="idLot" value="<?php echo $_GET['idLot']; ?>"/>
+
+
+                <div class="form-group">
+                    <span class="error "> <?php echo $prixErr; ?></span>
+
+                    <div class="col-sm-offset-2 col-sm-5">
+                        <a href="liste_detail.php?id=<?php echo $_GET['idLot']; ?>" class="btn btn-primary mr-3">
+                            <i class="fa fa-step-backward"></i> Retour
+                        </a>
+
+                        <button type="submit" class="btn btn-default bg-primary text-white">
+                            <i class="fa fa-exchange"></i> Modifier
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
         <script src="js/bootstrap.js"></script>
+        <?php 
+            // $myId = $_GET['id'];
+            
+           
+            if(!empty($descriptionErr) || !empty($prixErr)){ 
+                echo "<script type='text/javascript'>";
+                echo "setTimeout(function() {window.location.href = 'modifier_detail.php?id=$idDetail&idLot=$idLot';},5000);";
+                echo"</script>";
+            }
+            
+            if($recu=='ok'){
+                echo "<script type='text/javascript'>";
+                echo "setTimeout(function() {window.location.href = 'liste_detail.php?id=$idLot';},5000);";
+                echo"</script>";
+            }
 
+        ?>
     </body>
 </html>

@@ -48,6 +48,7 @@ if (mysqli_num_rows($result) == 1) {
     $telephone = $row['phone'];
     $mot_de_pass = $row['password'];
     $iduser = $row['id_user'];
+    $role = $row['role'];
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -75,14 +76,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif($_POST['mot_de_pass'] != $mot_de_pass) {
         $mot_de_pass = test_input($_POST["mot_de_pass"]);
     }
+    if (!empty($_POST["role"])) {
+        $role = test_input($_POST["role"]);
+    }
 
     if (empty($nomErr) && empty($telephoneErr) && empty($mot_de_passErr)) {
 
-        // echo 'lala'.$_POST['id'];
+        // echo 'lala'.$_POST['role'];
         $id = intval($_POST['id']);
         $telephone = intval($telephone);
         // echo $id;
-        $sql = "UPDATE user  SET name='$nom', email= '$email', phone=$telephone, password='$mot_de_pass' WHERE id_user = $id;";
+        $sql = "UPDATE user  SET name='$nom', email= '$email', phone=$telephone, password='$mot_de_pass', role='$role'
+                WHERE id_user = $id;";
     
         if (mysqli_query($link, $sql)) {
             $alert = '<div class="alert alert-success mt-5 text-center"><h2>Votre modification est reussit,</div>';
@@ -95,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_close($link);
     
     }
+    
 
 }
 
@@ -145,6 +151,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <span class="error"> <?php echo $mot_de_passErr; ?></span>
                 </div>
+                <div class="form-group">
+                    <label for="sel1" class="control-label col-sm-2">
+                        Role de l'utilisateur:
+                    </label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name='role'>
+                            <option value="<?php echo $role ?>"><?php echo 'Le role est '.$role.' choisissez si vous le change'; ?></option>
+                            <option value="admin">admin</option>
+                            <option value="utilisateur">utilisateur</option>
+                        </select>
+                    </div>
+                </div> 
                 <input type="hidden" name="id" value="<?php echo $iduser; ?>"/>
 
                 <div class="form-group">
@@ -153,6 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <a href="detail_user.php" class="btn btn-primary ml-2">Retour</a>
                     </div>
                 </div>
+                
                 
             </form>
         </div>

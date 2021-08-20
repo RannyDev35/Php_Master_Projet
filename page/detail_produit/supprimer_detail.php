@@ -1,14 +1,15 @@
 <?php
 include "../db_connect.php";
+$recu = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $id= intval($_POST["id"]);
-    // echo $id;
+    $idLot = intval($_POST["idLot"]);
 
-    $sql = "DELETE FROM user where id_user=$id";
+    $sql = "DELETE FROM detail_produit where id_produit=$id";
     if(mysqli_query($link, $sql)){
         $alert = '<div class="alert alert-success mt-5 text-center"><h2>Votre suppresion est reussit</div>';
-            header("refresh:2; url = detail_user.php");
+        $recu = true;
     } else{
         echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);
     }
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Suppression utilisateur</title>
+    <title>Suppression uu Detail de produit</title>
      <!--===============================================================================================-->
      <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="../../css/style.css">
@@ -40,16 +41,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h3 class="mt-3 mb-5 ml-5">SUPPRESION DE L'UTILISATEUR</h3>
+                    <h3 class="mt-3 mb-5 ml-5">SUPPRESION UN DETAIL DE PRODUIT</h3>
                     <?php echo $alert; ?>
 
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="alert alert-danger text-center">
                             <input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
-                            <p>Are you sure you want to delete this employee record?</p>
+                            <input type="hidden" name="idLot" value="<?php echo trim($_GET["idLot"]); ?>"/>
+                            <p>Êtes-vous sûr de vouloir supprimer cette fiche de datail produit?</p>
                             <p>
                                 <input type="submit" value="OUI" class="btn btn-danger">
-                                <a href="detail_user.php" class="btn btn-primary">NON</a>
+                                <a href="liste_detail.php?id=<?php echo $_GET["idLot"]; ?>" class="btn btn-primary">NON</a>
                             </p>
                         </div>
                     </form>
@@ -57,5 +59,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>        
         </div>
     </div>
+<?php
+        
+    if($recu=='ok'){
+        echo "<script type='text/javascript'>";
+        echo "setTimeout(function() {window.location.href = 'liste_detail.php?id=$idLot';},3000);";
+        echo"</script>";
+    }
+
+?>
 </body>
 </html>

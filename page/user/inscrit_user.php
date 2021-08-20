@@ -94,7 +94,7 @@ if (empty($nomErr) && empty($telephoneErr && empty($mot_de_passErr) && !empty($e
 
     if (mysqli_query($link, $sql)) {
         $alert = '<div class="alert alert-primary mt-5 text-center"><h2>Votre inscription est reussit, </h2><p>Patient le redirect vers le page login</p></div>';
-        header("refresh:3; url= ../login.php");
+        header("refresh:3; url= detail_user.php");
 
     } else {
         echo "ERROR: Impossible d'exécuter la requête $sql. " . mysqli_error($link);

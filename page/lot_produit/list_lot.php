@@ -57,27 +57,29 @@
             </div>
         </div>
     </nav>
-    <div class="mt-5">
+   
+    <div class="mt-3">
         <div class="container-fluid ">
             <div class="row p-5 ">
 
                 <div class="col-md-12">
-                    <h3 class="mt-5 ml-2 mb-2">Liste des Lots de produit:</h3>
+                    <h3 class="mt-5 ml-2 mb-2 text-center">Liste des Lots de produit:</h3>
+                    <p class="text-center mt-3 ">
+                        <em>
+                        Il faut clique le nom de lot produit pour voir les detail
+                        </em>
+                    </p>
                     <div class="container">
                         <div class="row p-2">
 <?php
     include "../db_connect.php";
-    // $sql = "SELECT * FROM detail_produit 
-    //         INNER JOIN lot_produit ON 
-    //         detail_produit.id_fk_lot_produit = lot_produit.id_lot_produit
-    //         WHERE id_fk_produit = ".$id." ; ";
     $sql = "SELECT * FROM lot_produit WHERE id_fk_produit = $id ; ";
     $result = mysqli_query($link, $sql);
     if ($result) {
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_array($result)) {
                 echo'<div class="bg-success m-2 p-2 rounded">';
-                echo'<a href="../detail_produit/liste_detail.php?id='.$row['id_lot_produit'].'" class="text-white">';
+                echo'<a href="../detail_produit/liste_detail.php?id='.$row['id_lot_produit'].'&idProduit='.$row['id_fk_produit'].'" class="text-white">';
                 echo $row['nom_lot'];
                 echo'</a>';
                 echo'</div>';
@@ -95,63 +97,91 @@
 ?> 
                         </div>                       
                     </div>
-                    <p class="text-center mt-3 ">
-                        <strong>
-<?php 
-    if ($login){
-        echo 'Il faut clique le nom de lot produit pour voir les detail';
-    }else{
-        echo 'Connectez pour voir le contenue de plateform';
-    }
-?>
-                        </stong>
-                    </p>
+                    
                 </div>
                 
             </div>
         </div>
     </div>
 
-    <div class="wrapper mt-5">
-        <div class="container-fluid mt-5">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mt-5 mb-3 clearfix">
-                        <h2 class="pull-left">Liste Lot de Produit</h2>
-                        <a href="list_lot.php?id=<?php echo $_GET['id'] ?>" class="btn btn-primary pull-right"><i class="fa fa-step-backward"></i> Retour</a>
-                        <a href="ajouter_lot.php?id=<?php echo $_GET['id'] ?>" class="btn btn-primary ml-5 pull-left"><i class="fa fa-plus"></i> Ajouter produit</a>
-                    </div>
+    <div class="container ">
+        <h2 class="text-primary text-center">Detail de produit tout les lots</h2>
+        <br>
+        <div class="row">
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Debit</th>
+                        <th scope="col">credit</th>
+<?php 
+    // if($login == 'admin'){
+    //     echo '<th scope="col">';
+    //     echo 'Action';
+    //     echo '</th>';
+    // }
+?>
+                           
+                    </tr>
+                </thead>
+
+                <tbody>
 <?php
+    $myId = $_GET['id'];
 
-    $id = $_GET['id'];
-
-    $sql = "SELECT * FROM `detail_produit`";
+    // Attempt select query execution
+    $sql = "SELECT * FROM detail_produit 
+            INNER JOIN lot_produit ON 
+            detail_produit.id_fk_lot_produit = lot_produit.id_lot_produit
+            WHERE id_fk_produit = '$myId' ORDER BY date_production DESC; ";
+    // $sql = "SELECT * FROM `detail_produit` ORDER BY date_production DESC;";
     $result = mysqli_query($link, $sql);
     if ($result) {
         if (mysqli_num_rows($result) > 0) {
-            echo '<table class="table table-bordered table-striped">';
-            echo "<thead>";
-            echo "<tr>";
-            echo "<th>#</th>";
-            echo "<th>Nom de produit</th>";
-            echo "<th>Action</th>";
-            echo "</tr>";
-            echo "</thead>";
-            echo "<tbody>";
+            $itertion = 0;
+            $totalDebit = 0;
+            $totalCredit = 0;
+            
             while ($row = mysqli_fetch_array($result)) {
-                echo "<tr>";
-                echo "<td>" . $row['id_lot_produit'] . "</td>";
-                echo "<td>" . $row['nom_lot'] . "</td>";
-                echo "<td>";
-                echo '<a href="modifier_lot.php?id=' . $row['id_lot_produit'] . '" class="mr-3" title="Modifier" data-toggle="tooltip"><span class="fa fa-edit"></span></a>';
-                echo '<a href="supprimer_lot.php?id=' . $row['id_lot_produit'] . ' " title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                echo "</td>";
-                echo "</tr>";
+                $itertion ++;
+                $totalDebit = $totalDebit + $row['debit'];
+                $totalCredit = $totalCredit + $row['credit'];
+                echo '<tr>';
+                echo '<th scope="row">'.$itertion. '</th>';
+                echo '<td>'.$row['description'].'</td>';
+                echo '<td>'.$row['debit'].'</td>';
+                echo '<td>'.$row['credit'].'</td>';
+                // if ($login=='admin'){
+                //     echo '<td>';
+                //     echo '<a href="../detail_produit/afficher_detail.php?id=' . $row['id_produit'] . '&idLot='.$myId.'" class="mr-3" title="Afficher" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
+                //     echo '<a href="../detail_produit/modifier_detail.php?id=' .$row['id_produit'] . '&idLot='.$myId.'" class="mr-3" title="Modifier" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
+                //     echo '<a href="../detail_produit/supprimer_detail.php?id=' . $row['id_produit'] . '&idLot='.$myId.'" title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                //     echo '</td>';
+                // }
+                echo '</tr>';
+                
             }
-            echo "</tbody>";
-            echo "</table>";
+            echo '<tr>';
+            echo '<th scope="row"></th>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '</tr>';
+
+            echo '<tr>';
+            echo '<th scope="row">TOTAL</th>';
+            echo '<td>------------------------</td>';
+            echo '<td>'.$totalDebit.'</td>';
+            echo '<td>'.$totalCredit.'</td>';
+            echo '</tr>';
+
+            echo '</tbody>';
+            echo'</table>';
         } else {
-            echo "<div class='alert alert-danger'><em>Aucun enregistrement n'a été trouvé.</em></div>";
+            echo '</tbody>';
+            echo'</table>';
+            echo "<div class='alert alert-danger text-center h4 w-100'><em>Aucun enregistrement n'a été trouvé.</em></div>";
         }
     } else {
         echo "Oups! Quelque chose s'est mal passé. Veuillez réessayer plus tard.";
@@ -160,9 +190,21 @@
     // Close connection
     $mysqli->close();
 ?>
-                </div>
-            </div>
-        </div>
+         
+        </div>    
+    </div>
+
+    <div class="container mt-5">
+        <h2>Rapport</h2>
+<?php
+// $reste = $totalCredit - $totalDebit;
+// if ($reste < 0){
+//     echo 'PERDU';
+
+// }else{
+//     echo 'GAGNE';
+// }
+?>
     </div>
     
 </body>
